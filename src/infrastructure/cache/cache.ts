@@ -31,8 +31,16 @@ class RedisCache {
   }
 
   async connect(): Promise<void> {
-    if (!this.isConnected) {
+    if (this.isConnected) {
+      return;
+    }
+
+    try {
       await this.client.connect();
+      this.isConnected = true;
+    } catch (error) {
+      this.isConnected = false;
+      logger.warn('Redis unavailable, continuing without cache:', error);
     }
   }
 

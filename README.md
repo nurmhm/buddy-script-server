@@ -149,7 +149,6 @@ pnpm test:coverage
 
 See `.env.example` for all required environment variables.
 
-
 ## 📝 API Documentation
 
 ### Authentication Endpoints
@@ -197,6 +196,3 @@ Authorization: Bearer <token>
 - Password hashing with bcrypt
 - Rate limiting
 - Input validation with Zod
-
-
-

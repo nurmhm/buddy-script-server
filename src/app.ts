@@ -7,7 +7,7 @@ import { errorHandler } from './middleware/errorHandler';
 import { notFound } from './middleware/notFound';
 import { rateLimiter } from './middleware/rateLimiter';
 import logger from './utils/logger';
-import { authRouter} from './apps/user/routes';
+import { authRouter } from './apps/user/routes';
 
 const app: Application = express();
 
@@ -28,7 +28,6 @@ if (config.nodeEnv !== 'test') {
   );
 }
 
-
 // Rate limiting
 app.use(rateLimiter);
 
@@ -41,7 +40,6 @@ app.get('/health', (_req: Request, res: Response) => {
     environment: config.nodeEnv,
   });
 });
-
 
 // API routes
 app.use('/api/v1', authRouter);

@@ -21,8 +21,6 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(32),
   JWT_REFRESH_EXPIRES_IN: z.string().default('30d'),
 
-
-
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default(900000), // 15 minutes
   RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).default(100),
@@ -54,8 +52,6 @@ const config = {
     refreshExpiresIn: env.JWT_REFRESH_EXPIRES_IN,
   },
 
-
-
   rateLimit: {
     windowMs: env.RATE_LIMIT_WINDOW_MS,
     maxRequests: env.RATE_LIMIT_MAX_REQUESTS,
@@ -65,8 +61,6 @@ const config = {
     origin: env.CORS_ORIGIN === '*' ? '*' : env.CORS_ORIGIN.split(','),
     credentials: true,
   },
-
-
 } as const;
 
 export default config;

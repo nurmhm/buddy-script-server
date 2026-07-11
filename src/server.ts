@@ -7,15 +7,13 @@ import app from './app';
 import config from './config';
 import cached from './infrastructure/cache/cache';
 
-
 const startServer = async () => {
   try {
-    // Connect to Redis
-    await cached.connect();
+    // Start Redis connection in the background so the app can still boot without it
+    void cached.connect();
 
     // Create HTTP server
     const httpServer = createServer(app);
-
 
     // Start HTTP server
     httpServer.listen(config.port, '0.0.0.0', () => {
