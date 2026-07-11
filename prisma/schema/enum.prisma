@@ -1,1 +1,12 @@
 
+
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum LikeTargetType {
+  POST
+  COMMENT
+}

@@ -1,13 +1,19 @@
 
 model User {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    lastLogin  DateTime?
-    firstName     String
-    lastName      String?
-    email    String  @unique
-    password String
-    @@index([id])
-    @@map("users")
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastLogin DateTime?
+  firstName String
+  lastName  String?
+  email     String   @unique
+  password  String
+
+  posts     Post[]
+  comments  Comment[]
+  likes     Like[]
+
+  @@index([id])
+  @@map("users")
 }
+

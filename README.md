@@ -163,7 +163,8 @@ Content-Type: application/json
 {
   "email": "user@example.com",
   "password": "SecurePass123",
-  "name": "John Doe"
+  "firstName": "John"
+  "lastName" : "Doe"
 }
 ```
 
