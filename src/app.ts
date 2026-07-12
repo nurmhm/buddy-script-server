@@ -10,6 +10,7 @@ import { rateLimiter } from './middleware/rateLimiter';
 import logger from './utils/logger';
 import { authRouter } from './apps/user/routes';
 import { postRouter } from './apps/post/routes';
+import { commentRouter } from './apps/comment/routes';
 
 const app: Application = express();
 
@@ -47,6 +48,7 @@ app.get('/health', (_req: Request, res: Response) => {
 // API routes
 app.use('/api/v1', authRouter);
 app.use('/api/v1/posts',postRouter);
+app.use('/api/v1/comments', commentRouter);
 
 // 404 handler
 app.use(notFound);
