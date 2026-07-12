@@ -6,5 +6,6 @@ const commentRouter = Router();
 const commentController = new CommentController();
 
 commentRouter.post('/', authenticate, commentController.createComment);
-
+commentRouter.get('/', authenticate, commentController.getComments);
+commentRouter.get('/:commentId/replies', authenticate, commentController.getReplies);
 export { commentRouter };

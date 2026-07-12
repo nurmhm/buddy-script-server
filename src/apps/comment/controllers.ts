@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { ZCreateComment } from "./validators";
 import prisma from "@/infrastructure/database/connection";
 import { AppError } from "@/utils/AppError";
+import { ZGQuery } from "../user/validators";
 
 export class CommentController {
     createComment = asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
@@ -61,5 +62,93 @@ export class CommentController {
             data: comment,
         });
     });
+
+    getComments = asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const {page, limit, sortBy, orderBy} = ZGQuery.parse(req.query);
+        const {postId} = req.query as { postId: string };
     
+        const skip = (page - 1) * limit;
+
+        const orderClause: Record<string, 'asc' | 'desc'> = { [sortBy]: orderBy };
+
+        const comments = await prisma.comment.findMany({
+            skip,
+            take: limit,
+            orderBy: orderClause,
+            where: {
+                parentId: null,
+                postId: postId,
+            },
+            select: {
+                    id: true,
+    content: true,
+    createdAt: true,
+    likeCount: true,
+    author: {
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+        },
+    },
+
+    _count: {
+        select: {
+            replies: true,
+        },
+    }
+            },
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Comments fetched successfully",
+            data: comments,
+        });
+
+    })
+
+    getReplies = asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+        const {page, limit, sortBy, orderBy} = ZGQuery.parse(req.query);
+        const {commentId} = req.params as { commentId: string };
+        console.log(commentId, "commentId")
+        const skip = (page - 1) * limit;
+
+        const orderClause: Record<string, 'asc' | 'desc'> = { [sortBy]: orderBy };
+
+        const replies = await prisma.comment.findMany({
+            skip,
+            take: limit,
+            orderBy: orderClause,
+            where: {
+                parentId: commentId,
+            },
+            select: {
+                id: true,
+                content: true,
+                createdAt: true,
+                likeCount: true,
+                author: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                    },
+                },
+
+                _count: {
+                    select: {
+                        replies: true,
+                    },
+                }
+            },
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Replies fetched successfully",
+            data: replies,
+        });
+    }
+)
 }
