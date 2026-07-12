@@ -33,6 +33,14 @@ export class AuthController {
 
     const { accessToken, refreshToken } = this.generateTokens(user.id, user.email);
 
+
+    res.cookie('refreshToken', refreshToken, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
+
     return res.status(201).json({
       success: true,
       message: 'User registered successfully',
@@ -44,7 +52,6 @@ export class AuthController {
           lastName: user.lastName,
         },
         accessToken,
-        refreshToken,
       },
     });
   });
@@ -74,6 +81,13 @@ export class AuthController {
 
     const { accessToken, refreshToken } = this.generateTokens(user.id, user.email);
 
+    res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000, 
+  });
+
     return res.status(200).json({
       success: true,
       message: 'Login successful',
@@ -85,13 +99,12 @@ export class AuthController {
           lastName: user.lastName,
         },
         accessToken,
-        refreshToken,
       },
     });
   });
 
   refreshToken = asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-    const { refreshToken } = req.body;
+   const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) throw AppError.badRequest('Refresh token required');
 
@@ -110,19 +123,28 @@ export class AuthController {
       decoded.email
     );
 
+    res.cookie('refreshToken', newRefreshToken, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
+
     return res.status(200).json({
       success: true,
       message: 'Token refreshed successfully',
-      data: { accessToken, refreshToken: newRefreshToken },
+      data: { accessToken },
     });
   });
 
-  logout = asyncHandler(async (_req: Request, res: Response, _next: NextFunction) => {
-    return res.status(200).json({
-      success: true,
-      message: 'Logout successful',
-    });
+logout = asyncHandler(async (_req, res) => {
+  res.clearCookie('refreshToken');
+
+  return res.status(200).json({
+    success: true,
+    message: 'Logout successful',
   });
+});
 
   private generateTokens(userId: string, email: string) {
     const accessToken = jwt.sign({ userId, email }, config.jwt.secret, {

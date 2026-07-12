@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import config from './config';
@@ -8,6 +9,7 @@ import { notFound } from './middleware/notFound';
 import { rateLimiter } from './middleware/rateLimiter';
 import logger from './utils/logger';
 import { authRouter } from './apps/user/routes';
+import { postRouter } from './apps/post/routes';
 
 const app: Application = express();
 
@@ -18,6 +20,7 @@ app.use(cors(config.cors));
 // Request parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
 
 // Logging
 if (config.nodeEnv !== 'test') {
@@ -43,6 +46,7 @@ app.get('/health', (_req: Request, res: Response) => {
 
 // API routes
 app.use('/api/v1', authRouter);
+app.use('/api/v1/posts',postRouter);
 
 // 404 handler
 app.use(notFound);
