@@ -30,6 +30,7 @@ const image = req.file ? `/uploads/${req.file.filename}` : null;
       imageUrl: true,
       visibility: true,
       authorId: true,
+    
       createdAt: true,
     },
   });
@@ -68,6 +69,8 @@ const image = req.file ? `/uploads/${req.file.filename}` : null;
                 imageUrl: true,
                 visibility: true,
                 authorId: true,
+                  commentCount: true,
+      likeCount: true,
                 author: {
                     select: {
                         id: true,
@@ -81,6 +84,7 @@ const image = req.file ? `/uploads/${req.file.filename}` : null;
         prisma.post.count()
     ])
  
+    const totalPages = Math.ceil(total / limit);
 
     return res.status(200).json({
         success: true,
@@ -90,6 +94,8 @@ const image = req.file ? `/uploads/${req.file.filename}` : null;
             page,
             limit,
             total,
+            totalPages,
+    hasMore: page < totalPages,
         },
     });
 });
