@@ -146,6 +146,31 @@ logout = asyncHandler(async (_req, res) => {
   });
 });
 
+  me = asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+
+    console.log(req, "reqqqqqqqqqqqqqqq");
+    if (!req.user) {
+      throw AppError.unauthorized('Userrrr not authenticated');
+    }
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'User fetched successfully',
+      data: {
+        user,
+      },
+    });
+  });
+
   private generateTokens(userId: string, email: string) {
     const accessToken = jwt.sign({ userId, email }, config.jwt.secret, {
       expiresIn: config.jwt.expiresIn as ms.StringValue,
