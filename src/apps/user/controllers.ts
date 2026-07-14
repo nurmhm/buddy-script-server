@@ -148,9 +148,8 @@ logout = asyncHandler(async (_req, res) => {
 
   me = asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
 
-    console.log(req, "reqqqqqqqqqqqqqqq");
     if (!req.user) {
-      throw AppError.unauthorized('Userrrr not authenticated');
+      throw AppError.unauthorized('User not authenticated');
     }
     const user = await prisma.user.findUnique({
       where: { id: req.user.userId },

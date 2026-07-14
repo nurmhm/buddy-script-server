@@ -5,11 +5,12 @@ import prisma from "@/infrastructure/database/connection";
 import { NextFunction, Request, Response } from 'express';
 import { AppError } from "@/utils/AppError";
 import { ZGQuery } from "../user/validators";
-import cached from "@/infrastructure/cache/cache";
 
 export class PostController {
    createPost = asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
   const data = ZPost.parse(req.body);
+  
+  const image = req.file?.filename;
 
   if (!req.user) {
     throw AppError.unauthorized("User not authenticated");
@@ -18,7 +19,7 @@ export class PostController {
   const post = await prisma.post.create({
     data: {
       content: data.content,
-      imageUrl: data.imageUrl,
+      imageUrl: image,
       visibility: data.visibility,
       authorId: req.user.userId,
     },
