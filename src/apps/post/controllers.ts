@@ -10,7 +10,7 @@ export class PostController {
    createPost = asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
   const data = ZPost.parse(req.body);
   
-  const image = req.file?.filename;
+const image = req.file ? `/uploads/${req.file.filename}` : null;
 
   if (!req.user) {
     throw AppError.unauthorized("User not authenticated");
@@ -22,6 +22,7 @@ export class PostController {
       imageUrl: image,
       visibility: data.visibility,
       authorId: req.user.userId,
+      
     },
     select: {
       id: true,
@@ -59,13 +60,21 @@ export class PostController {
                     { authorId: req.user?.userId },
                 ]
             },
+
+
             select: {
                 id: true,
                 content: true,
                 imageUrl: true,
                 visibility: true,
                 authorId: true,
-                
+                author: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true
+                    }
+                },
                 createdAt: true,
             },
         }),
