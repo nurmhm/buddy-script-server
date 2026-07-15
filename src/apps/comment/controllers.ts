@@ -107,10 +107,28 @@ export class CommentController {
             },
         });
 
+        const commentIds = comments.map((c) => c.id);
+        const userLikes = req.user?.userId
+          ? await prisma.like.findMany({
+              where: {
+                userId: req.user.userId,
+                targetType: "COMMENT",
+                targetId: { in: commentIds },
+              },
+              select: { targetId: true },
+            })
+          : [];
+        const likedCommentIds = new Set(userLikes.map((l) => l.targetId));
+
+        const commentsWithLiked = comments.map((comment) => ({
+          ...comment,
+          isLiked: likedCommentIds.has(comment.id),
+        }));
+
         return res.status(200).json({
             success: true,
             message: "Comments fetched successfully",
-            data: comments,
+            data: commentsWithLiked,
         });
 
     })
@@ -151,10 +169,28 @@ export class CommentController {
             },
         });
 
+        const replyIds = replies.map((r) => r.id);
+        const userLikes = req.user?.userId
+          ? await prisma.like.findMany({
+              where: {
+                userId: req.user.userId,
+                targetType: "COMMENT",
+                targetId: { in: replyIds },
+              },
+              select: { targetId: true },
+            })
+          : [];
+        const likedReplyIds = new Set(userLikes.map((l) => l.targetId));
+
+        const repliesWithLiked = replies.map((reply) => ({
+          ...reply,
+          isLiked: likedReplyIds.has(reply.id),
+        }));
+
         return res.status(200).json({
             success: true,
             message: "Replies fetched successfully",
-            data: replies,
+            data: repliesWithLiked,
         });
     }
 )

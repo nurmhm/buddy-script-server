@@ -84,12 +84,30 @@ const [posts, total] = await Promise.all([
   }),
 ]);
 
+    const postIds = posts.map((p) => p.id);
+    const userLikes = req.user?.userId
+      ? await prisma.like.findMany({
+          where: {
+            userId: req.user.userId,
+            targetType: "POST",
+            targetId: { in: postIds },
+          },
+          select: { targetId: true },
+        })
+      : [];
+    const likedPostIds = new Set(userLikes.map((l) => l.targetId));
+
+    const postsWithLiked = posts.map((post) => ({
+      ...post,
+      isLiked: likedPostIds.has(post.id),
+    }));
+
     const totalPages = Math.ceil(total / limit);
 
     return res.status(200).json({
       success: true,
       message: 'Posts fetched successfully',
-      data: posts,
+      data: postsWithLiked,
       pagination: {
         page,
         limit,

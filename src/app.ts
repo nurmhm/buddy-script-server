@@ -11,6 +11,7 @@ import logger from './utils/logger';
 import { authRouter } from './apps/user/routes';
 import { postRouter } from './apps/post/routes';
 import { commentRouter } from './apps/comment/routes';
+import { likeRouter } from './apps/like/routes';
 
 const app: Application = express();
 
@@ -58,6 +59,7 @@ app.get('/health', (_req: Request, res: Response) => {
 app.use('/api/v1', authRouter);
 app.use('/api/v1/posts',postRouter);
 app.use('/api/v1/comments', commentRouter);
+app.use('/api/v1/likes', likeRouter);
 
 // 404 handler
 app.use(notFound);
