@@ -56,6 +56,13 @@ export class CommentController {
             },
         });
 
+        if (!data.parentId) {
+            await prisma.post.update({
+                where: { id: data.postId },
+                data: { commentCount: { increment: 1 } },
+            });
+        }
+
         return res.status(201).json({
             success: true,
             message: "Comment created successfully",

@@ -8,11 +8,7 @@ class RedisCache {
 
   constructor() {
     this.client = createClient({
-      socket: {
-        host: config.redis.host,
-        port: config.redis.port,
-      },
-      password: config.redis.password,
+      url: config.redis.url,
     });
 
     this.client.on('error', (err) => {
